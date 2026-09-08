@@ -8,7 +8,6 @@ const {
   default: makeWASocket,
   useMultiFileAuthState,
   DisconnectReason,
-  fetchLatestBaileysVersion,
   makeCacheableSignalKeyStore,
   isJidBroadcast,
 } = require('@whiskeysockets/baileys');
@@ -45,12 +44,8 @@ async function startBot() {
 
   // Baileys auth state
   const { state, saveCreds } = await useMultiFileAuthState(config.SESSION_DIR);
-  const { version }          = await fetchLatestBaileysVersion();
-  logger.info(`[Boot] Using Baileys v${version.join('.')}`);
-
   // ── Create socket ───────────────────────────────────────
   const sock = makeWASocket({
-    version,
     auth: {
       creds:  state.creds,
       keys:   makeCacheableSignalKeyStore(state.keys, pino({ level: 'silent' })),
