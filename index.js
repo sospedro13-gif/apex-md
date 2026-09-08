@@ -44,11 +44,15 @@ async function startBot() {
 
   // Baileys auth state
   const { state, saveCreds } = await useMultiFileAuthState(config.SESSION_DIR);
-  // ── Create socket ───────────────────────────────────────
-  const sock = makeWASocket({
+
+const { version } = await fetchLatestWaWebVersion();
+logger.info(`[Boot] Using WhatsApp Web v${version.join('.')}`);
+
+const sock = makeWASocket({
+    version,
     auth: {
-      creds:  state.creds,
-      keys:   makeCacheableSignalKeyStore(state.keys, pino({ level: 'silent' })),
+        creds: state.creds,
+        keys: makeCacheableSignalKeyStore(state.keys, logger),
     },
     printQRInTerminal: false, // we handle QR ourselves
     logger:            pino({ level: 'silent' }),
